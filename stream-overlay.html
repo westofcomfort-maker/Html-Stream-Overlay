@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=1920,height=1080,initial-scale=1.0"
+>
+
+<title>West of Comfort - Rumble Overlay</title>
+
+<style>
+/* =========================================================
+   WEST OF COMFORT - OBS OVERLAY
+   Canvas: 1920 x 1080
+
+   IMPORTANT:
+   HTML + BODY MUST REMAIN TRANSPARENT
+   ========================================================= */
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+    background: transparent !important;
+    background-color: transparent !important;
+
+    overflow: hidden;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: #f1eee7;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   CONFIGURATION
+   ========================================================= */
+
+:root {
+
+    /* Desert / WoC colors */
+    --sand: #d6c2a0;
+    --sand-light: #eee4d2;
+    --desert-orange: #b96f3d;
+    --rust: #8f4d2c;
+
+    /* Silver accent */
+    --silver: #c8ccd0;
+
+    /* Dark translucent backgrounds */
+    --black-85: rgba(10, 10, 9, .85);
+    --black-70: rgba(10, 10, 9, .70);
+    --black-55: rgba(10, 10, 9, .55);
+    --black-35: rgba(10, 10, 9, .35);
+
+    /* Chat width */
+    --chat-width: 430px;
+
+    /* Overlay margins */
+    --edge: 35px;
+}
+
+
+/* =========================================================
+   MAIN OVERLAY
+   ========================================================= */
+
+#overlay {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   WEST OF COMFORT BRANDING
+   ========================================================= */
+
+#woc-brand {
+
+    position: absolute;
+
+    left: var(--edge);
+    top: var(--edge);
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    padding: 13px 18px 14px 18px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(8, 8, 7, .78),
+            rgba(8, 8, 7, .38),
+            transparent
+        );
+
+    border-left: 3px solid var(--desert-orange);
+
+    text-shadow:
+        0 2px 5px rgba(0,0,0,.8);
+
+    z-index: 20;
+}
+
+.woc-main {
+
+    font-size: 29px;
+
+    font-weight: 800;
+
+    letter-spacing: 4px;
+
+    color: var(--sand-light);
+
+    line-height: 1;
+}
+
+.woc-sub {
+
+    margin-top: 7px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    letter-spacing: 3px;
+
+    color: var(--silver);
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   LIVE INDICATOR
+   ========================================================= */
+
+#live-indicator {
+
+    position: absolute;
+
+    left: var(--edge);
+    top: 125px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 7px 12px;
+
+    background: rgba(10,10,9,.62);
+
+    border-radius: 3px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: #ffffff;
+
+    text-shadow:
+        0 2px 4px rgba(0,0,0,.9);
+
+    z-index: 20;
+}
+
+.live-dot {
+
+    width: 8px;
+    height: 8px;
+
+    border-radius: 50%;
+
+    background: #d94a3a;
+
+    box-shadow:
+        0 0 8px rgba(217,74,58,.9);
+
+    animation: livePulse 1.7s infinite;
+}
+
+@keyframes livePulse {
+
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .45;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+
+/* =========================================================
+   CHAT CONTAINER
+   ========================================================= */
+
+#chat-panel {
+
+    position: absolute;
+
+    top: 35px;
+    right: 35px;
+
+    width: var(--chat-width);
+
+    height: 760px;
+
+    overflow: hidden;
+
+    border-radius: 6px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(8,8,7,.88),
+            rgba(8,8,7,.70)
+        );
+
+    border:
+
+        1px solid
+        rgba(214,194,160,.20);
+
+    box-shadow:
+
+        0 8px 30px
+        rgba(0,0,0,.35);
+
+    z-index: 10;
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   CHAT HEADER
+   ========================================================= */
+
+#chat-header {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    top: 0;
+
+    height: 55px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 18px;
+
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(15,15,13,.96),
+            rgba(15,15,13,.76)
+        );
+
+    border-bottom:
+
+        1px solid
+        rgba(214,194,160,.22);
+
+    z-index: 3;
+
+    pointer-events: none;
+}
+
+.chat-title {
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    color: var(--sand-light);
+}
+
+.chat-title::before {
+
+    content: "";
+
+    display: inline-block;
+
+    width: 7px;
+    height: 7px;
+
+    margin-right: 9px;
+
+    vertical-align: 1px;
+
+    border-radius: 50%;
+
+    background: var(--desert-orange);
+
+    box-shadow:
+        0 0 7px rgba(185,111,61,.75);
+}
+
+
+/* =========================================================
+   RUMBLE CHAT IFRAME
+   ========================================================= */
+
+#rumble-chat {
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    top: 55px;
+
+    width: 100%;
+    height: calc(100% - 55px);
+
+    border: none;
+
+    background: transparent;
+
+    /*
+       Rumble's chat page controls its own internal styling.
+
+       We leave the iframe isolated so Rumble can continue
+       handling live messages normally.
+    */
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   AD / PROMO CARD
+   ========================================================= */
+
+#ad-card {
+
+    position: absolute;
+
+    right: 35px;
+
+    bottom: 35px;
+
+    width: 430px;
+
+    min-height: 150px;
+
+    box-sizing: border-box;
+
+    padding: 20px 22px;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(17,16,14,.94),
+            rgba(47,35,27,.90)
+        );
+
+    border:
+
+        1px solid
+        rgba(214,194,160,.28);
+
+    border-left:
+
+        4px solid
+        var(--desert-orange);
+
+    border-radius: 5px;
+
+    box-shadow:
+
+        0 7px 25px
+        rgba(0,0,0,.35);
+
+    z-index: 15;
+
+    pointer-events: none;
+}
+
+.ad-label {
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    letter-spacing: 3px;
+
+    text-transform: uppercase;
+
+    color: var(--desert-orange);
+
+    margin-bottom: 8px;
+}
+
+.ad-title {
+
+    font-size: 21px;
+
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    color: var(--sand-light);
+
+    line-height: 1.15;
+
+    margin-bottom: 7px;
+}
+
+.ad-text {
+
+    font-size: 13px;
+
+    line-height: 1.45;
+
+    color: rgba(238,228,210,.82);
+
+    max-width: 360px;
+}
+
+.ad-url {
+
+    margin-top: 11px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    color: var(--silver);
+}
+
+
+/* =========================================================
+   BOTTOM LEFT SOCIAL / CHANNEL TAG
+   ========================================================= */
+
+#channel-tag {
+
+    position: absolute;
+
+    left: 35px;
+    bottom: 35px;
+
+    padding: 10px 15px;
+
+    background:
+        rgba(8,8,7,.65);
+
+    border-left:
+
+        2px solid
+        var(--silver);
+
+    color: var(--sand-light);
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.5px;
+
+    text-shadow:
+        0 2px 4px rgba(0,0,0,.9);
+
+    z-index: 20;
+}
+
+
+/* =========================================================
+   DESERT ACCENT LINE
+   ========================================================= */
+
+#desert-line {
+
+    position: absolute;
+
+    left: 35px;
+    right: 500px;
+
+    bottom: 20px;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(214,194,160,.55),
+            rgba(185,111,61,.30),
+            transparent
+        );
+
+    opacity: .65;
+}
+
+
+/* =========================================================
+   HIDE AD
+   ========================================================= */
+
+.ad-hidden {
+
+    display: none !important;
+}
+
+
+/* =========================================================
+   SMALLER SCREENS
+   ========================================================= */
+
+@media (max-width: 1280px) {
+
+    #chat-panel {
+
+        width: 350px;
+        height: 650px;
+
+        right: 20px;
+        top: 20px;
+    }
+
+    #ad-card {
+
+        width: 350px;
+
+        right: 20px;
+        bottom: 20px;
+    }
+
+    #channel-tag {
+
+        left: 20px;
+        bottom: 20px;
+    }
+
+    #woc-brand {
+
+        left: 20px;
+        top: 20px;
+    }
+
+    #live-indicator {
+
+        left: 20px;
+    }
+}
+</style>
+</head>
+
+
+<body>
+
+<div id="overlay">
+
+
+    <!-- ===============================================
+         WEST OF COMFORT BRAND
+         =============================================== -->
+
+    <div id="woc-brand">
+
+        <div class="woc-main">
+            WEST OF COMFORT
+        </div>
+
+        <div class="woc-sub">
+            Southwest New Mexico
+        </div>
+
+    </div>
+
+
+    <!-- ===============================================
+         LIVE INDICATOR
+         =============================================== -->
+
+    <div id="live-indicator">
+
+        <span class="live-dot"></span>
+
+        <span>LIVE</span>
+
+    </div>
+
+
+    <!-- ===============================================
+         RUMBLE CHAT
+         =============================================== -->
+
+    <section id="chat-panel">
+
+        <div id="chat-header">
+
+            <div class="chat-title">
+                Rumble Live Chat
+            </div>
+
+        </div>
+
+
+        <!--
+        ==================================================
+        IMPORTANT
+
+        Replace the URL below with the POP-OUT CHAT URL
+        from your Rumble livestream.
+
+        Do NOT use the normal video URL.
+
+        In Rumble:
+            Open your livestream
+            Open/pop-out the chat
+            Copy the chat URL
+            Paste it below.
+
+        ==================================================
+        -->
+
+        <iframe
+            id="rumble-chat"
+            src="YOUR_RUMBLE_POP_OUT_CHAT_URL_HERE"
+            allow="autoplay; clipboard-write"
+            scrolling="yes">
+        </iframe>
+
+    </section>
+
+
+    <!-- ===============================================
+         ADVERTISEMENT / PROMO
+
+         Change this text whenever you want.
+
+         You can also hide the entire card by adding:
+
+         class="ad-hidden"
+
+         to the ad-card div.
+         =============================================== -->
+
+    <div id="ad-card">
+
+        <div class="ad-label">
+            West of Comfort
+        </div>
+
+        <div class="ad-title">
+            Follow the Adventure
+        </div>
+
+        <div class="ad-text">
+            Off-grid living, desert exploration,
+            building a home base in Southwest New Mexico,
+            and whatever comes next.
+        </div>
+
+        <div class="ad-url">
+            WESTOFCOMFORT.COM
+        </div>
+
+    </div>
+
+
+    <!-- ===============================================
+         CHANNEL TAG
+         =============================================== -->
+
+    <div id="channel-tag">
+
+        @WESTOFCOMFORT
+
+    </div>
+
+
+    <!-- ===============================================
+         DECORATIVE LINE
+         =============================================== -->
+
+    <div id="desert-line"></div>
+
+
+</div>
+
+
+<script>
+
+/*
+=========================================================
+WEST OF COMFORT OVERLAY CONTROLS
+=========================================================
+*/
+
+
+/* -----------------------------------------------
+   CHANGE ADVERTISEMENT AUTOMATICALLY
+   -----------------------------------------------
+
+   Add additional advertisements here.
+
+   The overlay will rotate through them.
+*/
+
+const advertisements = [
+
+    {
+        label: "WEST OF COMFORT",
+        title: "Follow the Adventure",
+        text:
+            "Off-grid living, desert exploration, " +
+            "and building a home base in Southwest New Mexico.",
+        url: "WESTOFCOMFORT.COM"
+    },
+
+    {
+        label: "WEST OF COMFORT",
+        title: "Wear the Adventure",
+        text:
+            "Check out West of Comfort gear and support " +
+            "the channel.",
+        url: "WESTOFCOMFORT.COM"
+    },
+
+    {
+        label: "LIVE",
+        title: "Thanks for Watching",
+        text:
+            "Follow West of Comfort on Rumble and join " +
+            "the next adventure.",
+        url: "@WESTOFCOMFORT"
+    }
+
+];
+
+
+/* -----------------------------------------------
+   AD ROTATION
+   ----------------------------------------------- */
+
+let currentAd = 0;
+
+const adCard =
+    document.getElementById("ad-card");
+
+const adLabel =
+    adCard.querySelector(".ad-label");
+
+const adTitle =
+    adCard.querySelector(".ad-title");
+
+const adText =
+    adCard.querySelector(".ad-text");
+
+const adUrl =
+    adCard.querySelector(".ad-url");
+
+
+function showAdvertisement(index) {
+
+    const ad = advertisements[index];
+
+    if (!ad) {
+        return;
+    }
+
+    adLabel.textContent = ad.label;
+
+    adTitle.textContent = ad.title;
+
+    adText.textContent = ad.text;
+
+    adUrl.textContent = ad.url;
+}
+
+
+/*
+   Change advertisement every 20 minutes.
+
+   20 minutes = 1,200,000 milliseconds.
+*/
+
+setInterval(() => {
+
+    currentAd++;
+
+    if (currentAd >= advertisements.length) {
+        currentAd = 0;
+    }
+
+    showAdvertisement(currentAd);
+
+}, 1200000);
+
+
+/* -----------------------------------------------
+   INITIAL AD
+   ----------------------------------------------- */
+
+showAdvertisement(0);
+
+
+/* -----------------------------------------------
+   OPTIONAL:
+   PRESS H TO HIDE / SHOW AD
+
+   Useful while testing the overlay.
+   ----------------------------------------------- */
+
+document.addEventListener("keydown", function(event) {
+
+    if (
+        event.key === "h" ||
+        event.key === "H"
+    ) {
+
+        adCard.classList.toggle("ad-hidden");
+
+    }
+
+});
+
+
+/*
+=========================================================
+END WEST OF COMFORT OVERLAY
+=========================================================
+*/
+
+</script>
+
+</body>
+</html>
